@@ -1,34 +1,19 @@
-FROM node:19-alpine3.15 as dev
-WORKDIR /app
-COPY package.json package.json
-RUN yarn install 
-CMD [ "yarn", "start:dev" ]
+FROM node:14
 
+# Establecer el directorio de trabajo en el contenedor
+WORKDIR /usr/src/app
 
-FROM node:19-alpine3.15 as dev-deps
-WORKDIR /app
-COPY package.json package.json
-RUN yarn install --frozen-lockfile
+# Copiar package.json y package-lock.json
+COPY app/package*.json ./
 
+# Instalar las dependencias de la aplicación
+RUN npm install
 
-FROM node:19-alpine3.15 as builder
-WORKDIR /app
-COPY --from=dev-deps /app/node_modules ./node_modules
-COPY . .
-# RUN yarn test
-RUN yarn build
+# Copiar el resto de los archivos de la aplicación
+COPY app .
 
-
-FROM node:19-alpine3.15 as prod-deps
-WORKDIR /app
-COPY package.json package.json
-RUN yarn install --prod --frozen-lockfile
-
-
-FROM node:19-alpine3.15 as prod
+# Exponer el puerto en el que la aplicación escuchará
 EXPOSE 3000
-WORKDIR /app
-ENV APP_VERSION=${APP_VERSION}
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-CMD [ "node", "dist/main.js" ]
+
+# Comando para ejecutar la aplicación
+CMD ["node", "index.js"]
