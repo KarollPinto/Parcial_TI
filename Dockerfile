@@ -4,7 +4,7 @@ FROM node:14
 WORKDIR /usr/src/app
 
 # Copiar package.json y package-lock.json
-COPY app/package*.json ./
+COPY js/package*.json ./
 
 # Instalar las dependencias de la aplicación
 RUN npm install
