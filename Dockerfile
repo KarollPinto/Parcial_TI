@@ -10,7 +10,7 @@ COPY app/package*.json ./
 RUN npm install
 
 # Copiar el resto de los archivos de la aplicación
-COPY app .
+COPY .
 
 # Exponer el puerto en el que la aplicación escuchará
 EXPOSE 3000
